@@ -3,6 +3,7 @@
 
 # Small content-type fix: Nicolas Gregoire
 # Force JSON fix: Marcin 'Icewall' Noga
+# Inlcuded headers in decoder tab: Brett Gervasoni
 
 import json
 
@@ -131,6 +132,12 @@ class JSONDecoderTab(IMessageEditorTab):
       except:
         print "problem parsing data in setMessage"
         pretty_msg = garbage + clean
+
+      headers = ""
+      for header in r.getHeaders():
+        headers += header + "\n"
+
+      pretty_msg = headers + pretty_msg
 
       self._txtInput.setText(pretty_msg)
       self._txtInput.setEditable(self._editable)
