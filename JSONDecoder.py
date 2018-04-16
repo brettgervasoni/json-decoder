@@ -3,7 +3,9 @@
 
 # Small content-type fix: Nicolas Gregoire
 # Force JSON fix: Marcin 'Icewall' Noga
-# Inlcuded headers in decoder tab: Brett Gervasoni
+# Changes by Brett Gervasoni
+#   * Included headers in decoder tab.
+#   * Made force JSON detection more lenient, updated menuItems
 
 import json
 
@@ -19,8 +21,8 @@ from java.util import List, ArrayList
 
 # Menu items
 menuItems = {
-  False: "Turn JSON active detection on",
-  True:  "Turn JSON active detection off"
+  False: "Turn on forced JSON detection",
+  True:  "Turn off forced JSON detection"
 }
 
 # Content types
@@ -31,7 +33,7 @@ supportedContentTypes = [
 ]
 
 # Global Switch
-_forceJSON = False
+_forceJSON = True
 
 class BurpExtender(IBurpExtender, IMessageEditorTabFactory, IContextMenuFactory):
   def registerExtenderCallbacks(self, callbacks):
@@ -67,12 +69,12 @@ class JSONDecoderTab(IMessageEditorTab):
     self._txtInput = extender._callbacks.createTextEditor()
     self._txtInput.setEditable(editable)
 
-    self._jsonMagicMark = ['{"', '["', '[{']
+    self._jsonMagicMark = ['{', '[', '[{']
 
     return
 
   def getTabCaption(self):
-    return "JSON Decoder"
+    return "JSON"
 
   def getUiComponent(self):
     return self._txtInput.getComponent()
@@ -85,10 +87,10 @@ class JSONDecoderTab(IMessageEditorTab):
     else:
       r = self._helpers.analyzeResponse(content)
 
-    msg = content[r.getBodyOffset():].tostring()
+    msg = content[r.getBodyOffset():].tostring().strip()
 
-    if _forceJSON and len(msg) > 2 and msg[:2] in self._jsonMagicMark:
-      print "Forcing JSON parsing and magic mark found: %s"%msg[:2]
+    if _forceJSON and len(msg) > 2 and msg[0] in self._jsonMagicMark:
+      #print "Forcing JSON parsing and magic mark found: %s"%msg[0]
       return True
 
     for header in r.getHeaders():
