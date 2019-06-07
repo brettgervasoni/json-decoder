@@ -115,8 +115,6 @@ class JSONDecoderTab(IMessageEditorTab):
 
             msg = content[r.getBodyOffset():].tostring()
 
-            # find garbage index
-            # I know, this is not bulletproof, but we have to try
             try:
                 boundary = min(
                     msg.index('{') if '{' in msg else len(msg),
@@ -130,10 +128,11 @@ class JSONDecoderTab(IMessageEditorTab):
             clean = msg[boundary:]
 
             try:
-                pretty_msg = garbage.strip() + '\n' + json.dumps(json.loads(clean), indent=4)
+                #pretty_msg = garbage.strip() + '\n' + json.dumps(json.loads(clean), indent=4)
+                pretty_msg = json.dumps(json.loads(clean), indent=4)
             except:
                 print("problem parsing data in setMessage")
-                pretty_msg = garbage + clean
+                pretty_msg = clean
 
             headers = ""
             for header in r.getHeaders():
@@ -151,11 +150,9 @@ class JSONDecoderTab(IMessageEditorTab):
         if self._txtInput.isTextModified():
             try:
                 pre_data = self._txtInput.getText().tostring()
-                print(pre_data)
 
                 boundary = min(pre_data.index('{'), pre_data.index('['))
 
-                #garbage = pre_data[:boundary]
                 clean = pre_data[boundary:]
                 data = json.dumps(json.loads(clean))
             except:
