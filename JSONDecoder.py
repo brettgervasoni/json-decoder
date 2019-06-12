@@ -138,7 +138,7 @@ class JSONDecoderTab(IMessageEditorTab):
             for header in r.getHeaders():
                 headers += header + "\n"
 
-            pretty_msg = headers + pretty_msg
+            pretty_msg = headers + "\n" + pretty_msg
 
             self._txtInput.setText(pretty_msg)
             self._txtInput.setEditable(self._editable)
