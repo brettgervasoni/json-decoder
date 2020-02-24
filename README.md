@@ -1,5 +1,5 @@
-JSONDecoder
-====================
+JSONDecoder with headers
+=========================
 
 Fork of https://github.com/carstein/burp-extensions, and all credits go to michal.melewski@gmail.com
 
